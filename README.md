@@ -22,4 +22,4 @@ To set up this project on your local machine, please follow the instructions bel
 1) Go to the topshelfre folder
 2) Run ``` npm install ``` to install all the dependencies of the project
 3) Execute the command ``` npm run dev ```. It will start the node server at <http://locahost:3001>
-4) Execute the comman ``` npm run test ```. To verify all the tests.
+4) Execute the command ``` npm run test ```. To verify all the tests.
