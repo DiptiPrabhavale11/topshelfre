@@ -40,7 +40,64 @@ describe('Test the book store API', () => {
             expect(getBookResponse.body).toHaveProperty('publish_date', getAllResponse.body[0].publish_date);
             expect(getBookResponse.body).toHaveProperty('price', getAllResponse.body[0].price);
         });
+
+        test('Test GET /books/:id with invalid ID should return Book not found', async () => {
+            const response = await api.get('/books/664c0ac2c2a4974dd9b7296c')
+                .expect(404)
+            expect(response.text).toBe('Book not found');
+        });
+
+        test('Test GET /books/:id with invalid input should return Server Error', async () => {
+            const response = await api.get('/books/XXXXX')
+                .expect(500)
+            expect(response.text).toBe('Server error');
+        });
     })
+
+    describe('Test POST book API', () => {
+        test('Test POST /books should return 201 status code on success and return JSON for the new book', async () => {
+            const newBook = {
+                "title": "Five Point Someone",
+                "author": "Chetan Bhagat",
+                "publish_date": "2009-10-08T00:00:00.000Z",
+                "price": 5.99,
+            };
+            const response = await api
+                .post('/books')
+                .send(newBook)
+                .expect(201);
+
+            // Ensure the response body contains the new book with an ID
+            expect(response.body).toMatchObject(newBook);
+            expect(response.body).toHaveProperty('bookId');
+        })
+
+        test('Test POST /books should return 400 status code for invalid input', async () => {
+            const invalidBook = {
+                "title": "",
+                "author": "Chetan Bhagat",
+                "publish_date": "invalid-date-format",
+                "price": -5.99,
+            };
+
+            const response = await api
+                .post('/books')
+                .send(invalidBook)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Invalid Input data');
+        });
+
+    });
+
+    describe('Test PUT book API', () => {
+
+    });
+
+    describe('Test DELETE book API', () => {
+
+    });
 
 });
 

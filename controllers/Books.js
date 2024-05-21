@@ -35,7 +35,11 @@ bookRouter.post('/', async (req, res) => {
         const savedBook = await newBook.save();
         res.status(201).json(savedBook);
     } catch (error) {
-        res.status(400).send('Error: Something went wrong while saving the book: ' + error.message);
+        if (error.name === 'ValidationError') {
+            res.status(400).json({ error: 'Invalid Input data' });
+        } else {
+            res.status(500).send({ error: 'Something went wrong while saving the book: ' + error.message });
+        }
     }
 });
 
@@ -43,7 +47,7 @@ bookRouter.put('/:id', async (req, res) => {
     const { title, author, publish_date, price } = req.body;
 
     try {
-         // Update the existing book in the database (mongoDB)
+        // Update the existing book in the database (mongoDB)
         const updatedBook = await Book.findByIdAndUpdate(
             req.params.id,
             { title, author, publish_date, price },
