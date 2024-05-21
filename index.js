@@ -1,8 +1,8 @@
 //Starting point of application
 const app = require("./app");
 const http = require("http");
-const config = require("./Utils/config");
-const logger = require("./Utils/logger");
+const config = require("./utils/config");
+const logger = require("./utils/logger");
 
 const server = http.createServer(app);
 

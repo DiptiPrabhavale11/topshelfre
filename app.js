@@ -18,7 +18,7 @@ mongoose.connect(configuration.MONGODB_URI)
 
 app.use(cors());
 app.use(express.json());
-app.use("/books", booksRouter);
+app.use("/books", middleware.requestLogger, booksRouter);
 app.use(middleware.requestLogger);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
