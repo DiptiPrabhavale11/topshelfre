@@ -7,6 +7,7 @@ const middleware = require("./utils/middleware");
 const mongoose = require("mongoose").set("strictQuery", true);
 require("express-async-errors");
 const logger = require("./utils/logger");
+const booksRouter = require("./controllers/Books");
 //Connecting with mongoDB based on configuration specified in .env file
 mongoose.connect(configuration.MONGODB_URI)
     .then(() => {
@@ -17,6 +18,7 @@ mongoose.connect(configuration.MONGODB_URI)
 
 app.use(cors());
 app.use(express.json());
+app.use("/books", booksRouter);
 app.use(middleware.requestLogger);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
