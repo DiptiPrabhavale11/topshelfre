@@ -88,6 +88,55 @@ describe('Test the book store API', () => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toContain('Invalid Input data');
         });
+        
+        test('Test POST /books should return 400 status code for missing required fields', async () => {
+            const incompleteBook = {
+                author: "Chetan Bhagat",
+                publish_date: "2009-10-08T00:00:00.000Z",
+                price: 5.99
+            };
+    
+            const response = await api
+                .post('/books')
+                .send(incompleteBook)
+                .expect(400);
+    
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Invalid Input data');
+        });
+
+        test('Test POST /books should return 400 status code for invalid date format', async () => {
+            const invalidDateBook = {
+                title: "Invalid Date Book",
+                author: "Test Author",
+                publish_date: "invalid-date-format",
+                price: 5.99
+            };
+            const response = await api
+                .post('/books')
+                .send(invalidDateBook)
+                .expect(400);
+
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Invalid Input data');
+        });
+
+        test('Test POST /books should return 400 status code for invalid price', async () => {
+            const negativePriceBook = {
+                title: "Negative Price Book",
+                author: "Test Author",
+                publish_date: "2023-01-01T00:00:00.000Z",
+                price: "xxx"
+            };
+    
+            const response = await api
+                .post('/books')
+                .send(negativePriceBook)
+                .expect(400);
+    
+            expect(response.body).toHaveProperty('error');
+            expect(response.body.error).toContain('Invalid Input data');
+        });
 
     });
 
