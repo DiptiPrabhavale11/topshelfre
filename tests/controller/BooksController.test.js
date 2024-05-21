@@ -88,19 +88,19 @@ describe('Test the book store API', () => {
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toContain('Invalid Input data');
         });
-        
+
         test('Test POST /books should return 400 status code for missing required fields', async () => {
             const incompleteBook = {
                 author: "Chetan Bhagat",
                 publish_date: "2009-10-08T00:00:00.000Z",
                 price: 5.99
             };
-    
+
             const response = await api
                 .post('/books')
                 .send(incompleteBook)
                 .expect(400);
-    
+
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toContain('Invalid Input data');
         });
@@ -128,12 +128,12 @@ describe('Test the book store API', () => {
                 publish_date: "2023-01-01T00:00:00.000Z",
                 price: "xxx"
             };
-    
+
             const response = await api
                 .post('/books')
                 .send(negativePriceBook)
                 .expect(400);
-    
+
             expect(response.body).toHaveProperty('error');
             expect(response.body.error).toContain('Invalid Input data');
         });
@@ -141,11 +141,58 @@ describe('Test the book store API', () => {
     });
 
     describe('Test PUT book API', () => {
+        test('Test PUT /books/:id should return 200 status code on success and return updated book details', async () => {
+            const getAllResponse = await api.get("/books");
+            const id = getAllResponse.body[0].bookId;
+            const updatedBook = {
+                title: "Updated Book Title",
+                author: "Updated Book Author",
+                publish_date: "2023-02-01T00:00:00.000Z",
+                price: 19.99
+            };
 
+            const response = await api
+                .put(`/books/${id}`)
+                .send(updatedBook)
+                .expect(200);
+
+            expect(response.body).toMatchObject(updatedBook);
+        });
+
+        test('Test PUT /books should return 404 status code if book ID does not exist', async () => {
+            const response = await api
+                .put(`/books/664bfc31d58937c26d17a9b0`)
+                .send({
+                    title: "Updated Book Title",
+                    author: "Updated Book Author",
+                    publish_date: "2023-02-01T00:00:00.000Z",
+                    price: 19.99,
+                    pages: 250,
+                    ratings: 4.5,
+                    category: "Updated Category"
+                })
+                .expect(404);
+
+            expect(response.text).toBe('Book not found');
+        });
     });
 
     describe('Test DELETE book API', () => {
+        test('Test DELETE /books/:id should return 200 status code on success and return updated book details', async () => {
+            const getAllResponse = await api.get("/books");
+            const id = getAllResponse.body[0].bookId;
+            const response = await api
+                .delete(`/books/${id}`)
+                .expect(200)
+                expect(response.text).toBe(`Book id ${id} is deleted successfully`);
+        });
+        test('Test DELETE /books/:id should return 404 status code if book ID does not exist', async () => {
+            const response = await api
+                .delete(`/books/664bfc31d58937c26d17a9b0`)
+                .expect(404);
 
+            expect(response.text).toBe('Book not found');
+        });
     });
 
 });
